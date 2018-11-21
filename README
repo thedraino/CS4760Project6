@@ -1,2 +1,15 @@
 # CS4760Project6
 Operating System Simulator - Memory Management
+
+Sanjiv's Notes...
+– Second-Chance Algorithm
+	∗ Basically a FIFO replacement algorithm
+	∗ When a page is selected, examine its reference bit
+	∗ If reference bit is 0, replace the page
+	∗ If reference bit is 1, give the page a second chance and proceed to select the next FIFO page
+	∗ To give second chance, reset the reference bit and set the page arrival time to current time
+	∗ A frequently used page is always kept in memory
+	∗ Commonly implemented by a circular queue
+	∗ Worst case when all bits are set (degenerates to FIFO replacement)
+	∗ Performance evaluation with reference string 7, 0, 1, 2, 0, 3, 0, 4, 2 the reference bit as -1 or -0 at each time
+		instance.
