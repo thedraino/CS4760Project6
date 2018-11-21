@@ -32,19 +32,27 @@ define MAX_CURRENT_PROCESSES 18
 /* Structures */
 // Structure used in the message queue 
 typedef struct {
-	long msg_type;		// Controls who can receive the message.
-	int pid;		// Store the pid of the sender.
-	int tableIndex;		// Store the index of the child process from USER.
-	int request;		// Some value from 0-19 if the child process is requesting a resource from OSS.
-	int release;		// Some value from 0-19 if the child is notifying OSS that it is releasing a resource.
+	long msg_type;		// Control what process can receive the message.
+	int pid;		// Store the sending process's pid.
+	int address;		// Store the address location the process is requesting in memory. 
+	bool read;		// Flag is set to true if memory reference is read from memory. 
+	bool write;		// Flag is set to fales if memory reference is a write to memory. 
 	bool terminate;		// Default is false. Gets changed to true when child terminates. 
-	bool resourceGranted;	// Default is false. Gets changed to true when OSS approves the resource request from USER.
-	unsigned int messageTime[2];	// Will store the simulated clock's time at the time a message is sent
+	bool suspended;		// Default is false. Will be changed if indicated upon receiving a message from OSS. 
 } Message;
-  
-/* Shared memory info */
 
 /* Function prototypes */
-void handle ( int sig_num );
+void handle ( int sig_num );	// Function to handle any early-termination signals from either OSS or USER.
+  
+/* Shared memory info */
+Message message;
+int messageID;
+key_t messageKey = 1994;
+
+/* Shared Memory Variables */
+// Simulated clock
+int shmClockID;
+int *shmClock;
+key_t shmClockKey = 1993;
 
 #endif
