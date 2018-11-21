@@ -31,6 +31,16 @@ void cleanUpResources();
 
 
 /***** Global Variables *****/
+// Statistic trackers
+int seconds; 
+int totalMemoryAccesses; 
+double memoryAccessesPerSecond;
+int totalPageFaults;
+
+// Logfile information
+FILE *fp;
+char filename[12] = "program.log";
+int numberOFLines; 
 
 
 /*************************************************************************************************************/
