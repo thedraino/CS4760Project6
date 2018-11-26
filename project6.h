@@ -27,7 +27,7 @@
 #include <stdbool.h>
 
 /* Macro variables */
-define MAX_CURRENT_PROCESSES 18
+
 
 /* Structures */
 // Structure used in the message queue 
