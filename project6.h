@@ -42,7 +42,7 @@ typedef struct {
 } Message;
 
 /* Function prototypes */
-void handle ( int sig_num );	// Function to handle any early-termination signals from either OSS or USER.
+void sig_handle ( int sig_num );	// Function to handle any early-termination signals from either OSS or USER.
   
 /* Shared memory info */
 Message message;
