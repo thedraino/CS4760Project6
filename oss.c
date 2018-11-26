@@ -32,7 +32,8 @@ void cleanUpResources();
 
 /***** Global Variables *****/
 // Constants
-#define MAx_PROCESSES 18
+const int MAX_PROCESSES 18	// Default guard for maxCurrentProcesses value defined below.
+const int KILL_TIME 2		// Constant time for alarm signal handling.
 
 // Statistic trackers
 int seconds; 
@@ -55,7 +56,6 @@ int numberOFLines;
 int main ( int argc, char *argv[] ) {
 	int maxCurrentProcesses;	// Default value
 	int opt = 0;	// Controls the getopt loop
-	printf ( "Hello, from OSS.\n" );
 	
 	/* Loop to implement getopt to get any command-line options and/or arguments */
 	/* Option -s requires ant argument */
@@ -89,6 +89,9 @@ int main ( int argc, char *argv[] ) {
 				break;
 		}
 	}
+	
+	printf ( "Hello, from OSS.\n" );
+	printf ( "Max Processes: %d.\n", maxCurrentProcesses ); 
 	
 	return 0;
 }
