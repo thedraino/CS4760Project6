@@ -25,7 +25,7 @@ void enqueue ( Queue* queue, int item );
 int dequeue ( Queue* queue );
 int front ( Queue* queue );
 int rear ( Queue* queue );
-void incrementClock ( unsigned int shmClock[] );
+void incrementClock ( unsigned int clock[] );
 void printReport();
 void cleanUpResources();
 
