@@ -31,6 +31,9 @@ void cleanUpResources();
 
 
 /***** Global Variables *****/
+// Constants
+#define MAx_PROCESSES 18
+
 // Statistic trackers
 int seconds; 
 int totalMemoryAccesses; 
@@ -50,7 +53,42 @@ int numberOFLines;
 /*************************************************************************************************************/
 
 int main ( int argc, char *argv[] ) {
+	int maxCurrentProcesses;	// Default value
+	int opt = 0;	// Controls the getopt loop
 	printf ( "Hello, from OSS.\n" );
+	
+	/* Loop to implement getopt to get any command-line options and/or arguments */
+	/* Option -s requires ant argument */
+	while ( ( opt = getopt ( argc, argv, "hs:" ) ) != -1 ) {
+		switch ( opt ) {
+			/* Display the help message */
+			case 'h':
+				printf ( "Program: ./oss\n" );
+				printf ( "Options:\n" );
+				printf ( "\t-h : display help message (currently viewing)\n" );
+				printf ( "\t-s : specify the maximum number of user processes allowed by the system at any given time\n" );
+				printf ( "\tNote: -s requires an argument\n" );
+				printf ( "\tNote: oss does not require any options. Default values are provided if not specified.\n" );
+				printf ( "Example usage:\n" );
+				printf ( "\t./oss -s 3\n" );
+				printf ( "\toss will restrict the system to never have more than 3 child processes running at the\n" );
+				printf ( "\tsame time.\n" );
+				exit ( 0 );
+				break;
+			
+			/* Specify the maximum number of user processes spawned */
+			case 's':
+				maxCurrentProcesses = atoi ( optarg++ );
+				if ( maxCurrentProcesses > MAX_PROCESSES ) {
+					maxCurrentProcesses = MAX_PROCESSES;
+				}
+				break;
+
+			default:
+				maxCurrentProcesses = MAX_PROCESSES;
+				break;
+		}
+	}
 	
 	return 0;
 }
