@@ -35,8 +35,8 @@ typedef struct {
 	long msg_type;			// Control what process can receive the message.
 	int pid;			// Store the sending process's pid.
 	unsigned int sentTime[2];	// Array to capture the time at which the message was sent for statistcs.
-	bool read;			// Flag is set to true if child process's memory request involves a read from memory. 
-	bool write;			// Flag is set to true if child process's memory request is a write to memory.
+	int read;			// Flag is set to 1 if child process's memory request involves a read from memory. 
+	int write;			// Flag is set to 1 if child process's memory request involves a write to memory.
 	bool terminate;			// Flag is set to true if child process is wanting to terminate. Default is false.
 } Message;
 
