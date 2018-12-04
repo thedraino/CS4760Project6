@@ -40,7 +40,7 @@ typedef struct {
 
 /***** Function Prototypes *****/
 // General Functions
-void incrementClock ( unsigned int clock[] , int timeElapsed );
+void manageClock ( unsigned int clock[] , int timeElapsed );
 void clearPCBEntry ( int processID );
 void clearFrameEntries ( int processID);
 void printReport();
@@ -135,12 +135,12 @@ int main ( int argc, char *argv[] ) {
 
 // Function that increments the clock by some amount of time at different points to simulate processing time or 
 // overhead time. Also makes sure that nanoseconds are converted to seconds if/when necessary.
-void incrementClock ( unsigned int shmClock[], int timeElapsed ) {
+void manageClock ( unsigned int clock[], int timeElapsed ) {
 	int processingTime = timeElapsed;
-	shmClock[1] += processingTime;
+	clock[1] += processingTime;
 
-	shmClock[0] += shmClock[1] / 1000000000;
-	shmClock[1] = shmClock[1] % 1000000000;
+	clock[0] += clock[1] / 1000000000;
+	clock[1] = clock[1] % 1000000000;
 }
 
 // Function to create a queue of given capacity.
