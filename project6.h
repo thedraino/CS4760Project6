@@ -32,13 +32,12 @@
 /* Structures */
 // Structure used in the message queue 
 typedef struct {
-	long msg_type;		// Control what process can receive the message.
-	int pid;		// Store the sending process's pid.
-	int address;		// Store the address location the process is requesting in memory. 
-	bool read;		// Flag is set to true if memory reference is read from memory. 
-	bool write;		// Flag is set to fales if memory reference is a write to memory. 
-	bool terminate;		// Default is false. Gets changed to true when child terminates. 
-	bool suspended;		// Default is false. Will be changed if indicated upon receiving a message from OSS. 
+	long msg_type;			// Control what process can receive the message.
+	int pid;			// Store the sending process's pid.
+	unsigned int sentTime[2];	// Array to capture the time at which the message was sent for statistcs.
+	bool read;			// Flag is set to true if child process's memory request involves a read from memory. 
+	bool write;			// Flag is set to true if child process's memory request is a write to memory.
+	bool terminate;			// Flag is set to true if child process is wanting to terminate. Default is false.
 } Message;
 
 /* Function prototypes */
