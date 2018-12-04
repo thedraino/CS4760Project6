@@ -4,12 +4,33 @@
 // Created by: Andrew Audrain
 // Created on: 11/21/2018
 //
-// Purpose...
+// Program to simulate an OSS managing memory through use of the second-chance algorithm.
 
 #include "project6.h"
 
+
 /***** Structures *****/
-// A structure to represent a queue
+// Structure to represent the process control block. New processes can be created as long as the block is not full at the 
+//	time. Each instance of a Process will be stored in an array the size of MAX_PROCESSES.
+typedef struct {
+	int pid;		// Store the process ID of the process currently occupying this index of the block. 
+	int pageTable[32];	// Store the process's page table to keep track of what frames the process's pages
+				//	are stored in currently. 
+	unsigned int processCreationTime[2];	//  Capture the time at which the process is added to the control block. 
+} Process;
+
+// Structure to help define an the OSS's frame table. Each instance will represent a frame in the frame table. 
+//	OSS will create a an array of 256 Frames in main to represent the Frame Table. 
+typedef struct {
+	int occupiedBit;	// Bit to flag if the frame is currently occupied by a process.  
+	int processID;		// Stores the pid of the process currently associated with this frame. 
+	int processPageFrame;	// Stores the frame of the associated process's page table that this reference is stored in. 
+	int referenceBit;	// Bit to flag if the frame has been referenced before (used with second-chance algorithm).
+	int dirtyBit;		// Bit to flag if the frame has anything "written" to it. Frames with their dirty bit set
+				// 	"take longer" to process upon read requests.
+} Frame;
+
+// A structure to represent a queue.
 typedef struct {
 	int front, rear, size;
 	unsigned capacity;
@@ -18,6 +39,14 @@ typedef struct {
 
 
 /***** Function Prototypes *****/
+// General Functions
+void incrementClock ( unsigned int clock[] , int timeElapsed );
+void clearPCBEntry ( int processID );
+void clearFrameEntries ( int processID);
+void printReport();
+void cleanUpResources();
+
+// Queue Protypte Functions
 Queue* createQueue ( unsigned capacity );
 int isFull ( Queue* queue ); 
 int isEmpty ( Queue* queue );
@@ -25,26 +54,27 @@ void enqueue ( Queue* queue, int item );
 int dequeue ( Queue* queue );
 int front ( Queue* queue );
 int rear ( Queue* queue );
-void incrementClock ( unsigned int clock[] );
-void printReport();
-void cleanUpResources();
 
 
 /***** Global Variables *****/
 // Constants
-const int MAX_PROCESSES 18	// Default guard for maxCurrentProcesses value defined below.
-const int KILL_TIME 2		// Constant time for alarm signal handling.
-
+const int MAX_PROCESSES 18;	// Default guard for maxCurrentProcesses value defined below.
+const int KILL_TIME 2;		// Constant time for alarm signal handling.
+const int READ = 0;		// Constant to compare the request_type value to when a message is sent by USER. If
+const int WRITE = 1;		//	request_type == 0, it is a read. If request_type == 1, it is a write. 
+	
 // Statistic trackers
-int seconds; 
-int totalMemoryAccesses; 
-double memoryAccessesPerSecond;
-int totalPageFaults;
+int totalProcessesCreated = 0;
+int totalMemoryRequests = 0;
+int totalPageFaults = 0;
+double numberOfMemoryAccessesPerSecond;
+double numberOfPageFaultsPerMemoryAccess;
+unsigned int terminationTime[2] = { 0, 0 };
 
 // Logfile information
 FILE *fp;
 char filename[12] = "program.log";
-int numberOFLines; 
+int numberOfLines; 
 
 
 /*************************************************************************************************************/
@@ -104,41 +134,39 @@ int main ( int argc, char *argv[] ) {
 
 
 // Function that increments the clock by some amount of time at different points to simulate processing time or 
-// overhead time. Also makes sure that nanoseconds are converted to seconds if necessary.
-void incrementClock ( unsigned int shmClock[] ) {
-	int processingTime = 10000; // Can be changed to adjust how much the clock is incremented.
+// overhead time. Also makes sure that nanoseconds are converted to seconds if/when necessary.
+void incrementClock ( unsigned int shmClock[], int timeElapsed ) {
+	int processingTime = timeElapsed;
 	shmClock[1] += processingTime;
 
 	shmClock[0] += shmClock[1] / 1000000000;
 	shmClock[1] = shmClock[1] % 1000000000;
 }
 
-/* Note:
-   All below code regarding queue implentation was gotten from: 
-   https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/
-*/
-// Function to create a queue of given capacity. It initializes size of queue as 0.
+// Function to create a queue of given capacity.
+// It initializes size of queue as 0.
 Queue* createQueue ( unsigned capacity ) {
 	Queue* queue = (Queue*) malloc ( sizeof ( Queue ) );
 	queue->capacity = capacity;
 	queue->front = queue->size = 0;
-	queue->rear = capacity - 1;	// This is important, see the enqueue.
+	queue->rear = capacity - 1;	// This is important, see the enqueue
 	queue->array = (int*) malloc ( queue->capacity * sizeof ( int ) );
 
 	return queue;
 }
 
-// Queue is full when size becomes equal to the capacity.
+// Queue is full when size becomes equal to the capacity
 int isFull ( Queue* queue ) {
 	return ( queue->size == queue->capacity );
 }
 
-// Queue is empty when size is 0.
+// Queue is empty when size is 0
 int isEmpty ( Queue* queue ) { 
 	return ( queue->size == 0 );
 }
 
-// Function to add an item to the queue. It changes rear and size.
+// Function to add an item to the queue.
+// It changes rear and size.
 void enqueue ( Queue* queue, int item ) {
 	if ( isFull ( queue ) ) 
 		return;
@@ -148,7 +176,8 @@ void enqueue ( Queue* queue, int item ) {
 	queue->size = queue->size + 1;
 }
 
-// Function to remove an item from queue. It changes front and size.
+// Function to remove an item from queue.
+// It changes front and size.
 int dequeue ( Queue* queue ) {
 	if ( isEmpty ( queue ) )
 		return INT_MIN;
@@ -174,4 +203,4 @@ int rear ( Queue* queue ) {
 		return INT_MIN;
 
 	return queue->array[queue->rear];
-}
+} 
