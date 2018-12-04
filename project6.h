@@ -9,6 +9,7 @@
 #ifndef PROJECT6_HEADER_FILE
 #define PROJECT6_HEADER_FILE
 
+
 /* Included libraries */
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,8 +27,6 @@
 #include <sys/time.h>
 #include <stdbool.h>
 
-/* Macro variables */
-
 
 /* Structures */
 // Structure used in the message queue 
@@ -35,18 +34,22 @@ typedef struct {
 	long msg_type;			// Control what process can receive the message.
 	int pid;			// Store the sending process's pid.
 	unsigned int sentTime[2];	// Array to capture the time at which the message was sent for statistcs.
-	int read;			// Flag is set to 1 if child process's memory request involves a read from memory. 
-	int write;			// Flag is set to 1 if child process's memory request involves a write to memory.
+	int request_type;		// Flag to show the type of memory request that the process is making: 
+					//	- Set to 0 if process is requesting to read from memory.
+					//	- Set to 1 if process is requesting to write to memory. 
 	bool terminate;			// Flag is set to true if child process is wanting to terminate. Default is false.
 } Message;
 
+
 /* Function prototypes */
 void sig_handle ( int sig_num );	// Function to handle any early-termination signals from either OSS or USER.
-  
+
+
 /* Shared memory info */
 Message message;
 int messageID;
 key_t messageKey = 1994;
+
 
 /* Shared Memory Variables */
 // Simulated clock
