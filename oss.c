@@ -188,7 +188,7 @@ int main ( int argc, char *argv[] ) {
 		frameTable[i].occupiedBit = 0;
 	}
 	
-	printf ( "Setup frame table.\n" );
+	printf ( "Setup frame table. Size: %d\n", sizeof ( frameTable );
 	
 	// Process Control Block
 	// Declare the struct. Set the pid for each index to 0. Set each page's value to -1. 
@@ -201,7 +201,7 @@ int main ( int argc, char *argv[] ) {
 		}
 	}
 	
-	printf ( "Setup process control block.\n" );
+	printf ( "Setup process control block. Size: %d\n", sizeof (processControlBlock) );
 	
 	// Various variables used throughout main loop. 
 	pid_t childPid;
