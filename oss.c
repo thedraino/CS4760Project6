@@ -192,6 +192,47 @@ void manageClock ( unsigned int clock[], int timeElapsed ) {
 	clock[1] = clock[1] % 1000000000;
 }
 
+// Function to print the after-run report showing any relevant statistics. 
+void printReport() {
+
+}
+
+// Function to clear a specific entry in the process control block upon termination of a process that was stored there. 
+void clearPCBEntry ( int processID ) {
+	
+}
+
+// Function to clear any and all entries associated with a process upon termination of the associated process. 
+void clearFrameEntries ( int processID) {
+	
+}
+
+// Function to terminate all shared memory and message queue upon completion or to be used with signal handling.
+void cleanUpResources() {
+	// Close the file.
+	fclose ( fp );
+	
+	// Detach from shared memory.
+	shmdt ( shmClock );
+	
+	// Destroy shared memory.
+	shmctl ( shmClockID, IPC_RMID, NULL );
+	
+	// Destroy message queue.
+	msgctl ( messageID, IPC_RMID, NULL );
+}
+
+// Function to handle signal handling. See comments above in code where this is setup to get more information.
+void sig_handle ( int sig_num ) {
+	if ( sig_num == SIGINT || sig_num == SIGALRM ) {
+		printf ( "Signal to terminate was received.\n" );
+		printReport();
+		cleanUpResources();
+		kill ( 0, SIGKILL );
+		wait ( NULL );
+		exit ( 0 );
+}
+
 // Function to create a queue of given capacity.
 // It initializes size of queue as 0.
 Queue* createQueue ( unsigned capacity ) {
