@@ -70,11 +70,11 @@ int totalMemoryRequests = 0;
 int totalPageFaults = 0;
 double numberOfMemoryAccessesPerSecond;
 double numberOfPageFaultsPerMemoryAccess;
-unsigned int terminationTime[2] = { 0, 0 };
+unsigned int totalSecondsProgramRan; 
 
 // Logfile information
 FILE *fp;
-char filename[12] = "program.log";
+char logName[12] = "program.log";
 int numberOfLines; 
 
 
@@ -85,14 +85,24 @@ int numberOfLines;
 /*************************************************************************************************************/
 
 int main ( int argc, char *argv[] ) {
-	int maxCurrentProcesses; 
-	int opt = 0;	// Controls the getopt loop
 	
-	/* Loop to implement getopt to get any command-line options and/or arguments */
-	/* Option -s requires ant argument */
+	/* General Use Variables */
+	int i, j;			// Control variables for loop logic. 
+	int maxCurrentProcesses;	// Controls the maximum number of processes that can be running at one time.
+	int maxTotalProcesses = 100;	// Controls the maximum number of processes that can be created throughout the program. 
+	long ossID = getpid();		// Store the pid for OSS.
+	unsigned int newProcessTime[2] = { 0, 0 };	// Time value at which a new process should be be created.
+	fp = fopen ( logName, "w+" );	// Open up the log file for writing to. 
+	numberOfLines = 0;
+	srand ( time ( NULL ) );	// Seed for random number generation.
+	
+	/* Getopts */
+	// Loop to implement getopt to get any command-line options and/or arguments.
+	// Option -s requires ant argument.
+	int opt = 0;	// Controls the getopt loop
 	while ( ( opt = getopt ( argc, argv, "hs:" ) ) != -1 ) {
 		switch ( opt ) {
-			/* Display the help message */
+			// Display the help message.
 			case 'h':
 				printf ( "Program: ./oss\n" );
 				printf ( "Options:\n" );
@@ -106,8 +116,8 @@ int main ( int argc, char *argv[] ) {
 				printf ( "\tsame time.\n" );
 				exit ( 0 );
 				break;
-			
-			/* Specify the maximum number of user processes spawned */
+		
+			// Specify the maximum number of user processes spawned.
 			case 's':
 				maxCurrentProcesses = atoi ( optarg++ );
 				if ( maxCurrentProcesses > MAX_PROCESSES ) {
@@ -119,10 +129,48 @@ int main ( int argc, char *argv[] ) {
 				maxCurrentProcesses = MAX_PROCESSES;
 				break;
 		}
+	} // End of getopts
+	
+// 	printf ( "Max Processes: %d.\n", maxCurrentProcesses ); 
+	
+	/* Signal Handling */
+	// Sets the timer alarm based on the value of KILL_TIME
+	alarm ( KILL_TIME );	
+	
+	// Catch signals for ctrl-c input or other early termination signals.
+	if ( signal ( SIGINT, sig_handle ) == SIG_ERR ) {
+		perror ( "OSS: ctrl-c signal failed." );
 	}
 	
-	printf ( "Hello, from OSS.\n" );
-	printf ( "Max Processes: %d.\n", maxCurrentProcesses ); 
+	// Catch the signal for the alarm.
+	if ( signal ( SIGALRM, sig_handle ) == SIG_ERR ) {
+		perror ( "OSS: alarm signal failed." );
+	}
+	
+	/* Shared Memory */
+	// Create shared memory block for simulated system clock.
+	if ( ( shmClockID = shmget ( shmClockKey, ( 2 * ( sizeof ( unsigned int ) ) ), IPC_CREAT | 0666 ) ) == -1 ) {
+		perror ( "OSS: Failure to create shared memory space for simulated clock." );
+	}
+	
+	// Attach to and initialize shared memory.
+	if ( ( shmClock = (unsigned int *) shmat ( shmClockID, NULL, 0 ) ) < 0 ) {
+		perror ( "OSS: Failure to attach to shared memory space for simulated clock." );
+		
+		return 1;
+	}
+	shmClock[0] = 0;	// Will hold the seconds value for the simulated clock.
+	shmClock[1] = 1;	// Will hold the nanoseconds value for the simulated clock. 
+	
+	/* Message Queue */
+	// Create the message queue used for IPC.
+	if ( ( messageID = msgget ( messageKey, IPC_CREAT | 0666 ) ) == -1 ) {
+		perror ( "OSS: Failure to create the message queue." );
+		
+		return 1;
+	}
+	
+	
 	
 	return 0;
 }
