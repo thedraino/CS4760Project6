@@ -43,7 +43,7 @@ typedef struct {
 void manageClock ( unsigned int clock[] , int timeElapsed );
 // void clearPCBEntry ( int processID );
 // void clearFrameEntries ( int processID);
-void printReport( void );
+// void printReport( void );
 void cleanUpResources( void );
 
 // Queue Protypte Functions
@@ -554,21 +554,21 @@ void manageClock ( unsigned int clock[], int timeElapsed ) {
 // unsigned int totalSecondsProgramRan;
 
 // Function to print the after-run report showing any relevant statistics. 
-void printReport() {
-	totalSecondsProgramRan = shmClock[0]; 
-	numberOfMemoryAccessesPerSecond = totalMemoryRequests / totalSecondsProgramRan;
-	numberOfPageFaultsPerMemoryAccess = totalPageFaults / totalMemoryRequests;
+// void printReport() {
+// 	totalSecondsProgramRan = shmClock[0]; 
+// 	numberOfMemoryAccessesPerSecond = totalMemoryRequests / totalSecondsProgramRan;
+// 	numberOfPageFaultsPerMemoryAccess = totalPageFaults / totalMemoryRequests;
 	
-	printf ( "Total processes created: %d.\n", totalProcessesCreated );
-	printf ( "Total memory requests processed: %d.\n", totalMemoryRequests );
-	printf ( "Total page faults: %d.\n", totalPageFaults );
-	printf ( "Number of memory accesses per second: %f.\n", numberOfMemoryAccessesPerSecond );
-	printf ( "Number of page faults per second: %f.\n", numberOfPageFaultsPerMemoryAccess );
-}
+// 	printf ( "Total processes created: %d.\n", totalProcessesCreated );
+// 	printf ( "Total memory requests processed: %d.\n", totalMemoryRequests );
+// 	printf ( "Total page faults: %d.\n", totalPageFaults );
+// 	printf ( "Number of memory accesses per second: %f.\n", numberOfMemoryAccessesPerSecond );
+// 	printf ( "Number of page faults per second: %f.\n", numberOfPageFaultsPerMemoryAccess );
+// }
 
 // Function to terminate all shared memory and message queue upon completion or to be used with signal handling.
 void cleanUpResources() {
-	printReport();
+// 	printReport();
 	// Close the file.
 	fclose ( fp );
 	
