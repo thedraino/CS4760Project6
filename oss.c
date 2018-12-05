@@ -43,8 +43,8 @@ typedef struct {
 void manageClock ( unsigned int clock[] , int timeElapsed );
 // void clearPCBEntry ( int processID );
 // void clearFrameEntries ( int processID);
-void printReport();
-void cleanUpResources();
+void printReport( void );
+void cleanUpResources( void );
 
 // Queue Protypte Functions
 Queue* createQueue ( unsigned capacity );
@@ -204,7 +204,7 @@ int main ( int argc, char *argv[] ) {
 	unsigned int newProcessTime[2] = { 0, 0 };	// Time value at which a new process should be be created.
 	
 	/* Main Loop */
-	while ( 1 ) {
+	while ( totalProcessesCreated <= maxTotalProcesses ) {
 		/* 1. Check to make sure the log file has surpassed it maximum number of lines allowed. 
 		If it has, close the file and set the flag to false so no more writes will be done. */
 		if ( numberOfLines >= 10000 ) {
@@ -245,7 +245,7 @@ int main ( int argc, char *argv[] ) {
 				processControlBlock[pcbIndex].pid = childPid; 
 				processControlBlock[pcbIndex].processCreationTime[0] = shmClock[0];
 				processControlBlock[pcbIndex].processCreationTime[1] = shmClock[1];
-				totalProcessCreated++;
+				totalProcessesCreated++;
 				
 				// Generate new time for the next process to be created. 
 				newProcessTime[0] = shmClock[0]; 
@@ -262,7 +262,7 @@ int main ( int argc, char *argv[] ) {
 
 		
 		// Set the following flags to false each run through the loop...
-		noEmptyFrames = false; 
+		noEmptyFrame = false; 
 		
 		/* 4. Get the index for the process in the process control block */
 		for ( i = 0; i < maxCurrentProcesses; ++i ) {
@@ -335,7 +335,7 @@ int main ( int argc, char *argv[] ) {
 			//	set or not. A set dirty bit will result in slight processing time as opposed to 
 			//	requesting to read a blank frame. 
 			if ( message.request_type == READ ) {
-				if ( frameTable[frameIndex]dirtyBit == 1 ) {
+				if ( frameTable[frameIndex].dirtyBit == 1 ) {
 					if ( keepLogging ) {
 						fprintf( fp, "OSS: Process %d is reading from Page %d (dirty) in Frame %d\n", 
 							message.pid, message.pageReferenced, frameIndex );
@@ -400,7 +400,7 @@ int main ( int argc, char *argv[] ) {
 					// Update log file.
 					if ( keepLogging ) {
 						fprintf( fp, "OSS: Process %d's Page %d was loaded into Frame %d at %d:%d.\n", 
-							message.pid, message.pageReferenced, i );
+							message.pid, message.pageReferenced, i, shmClock[0], shmClock[1] );
 						if ( message.request_type == WRITE ) {
 							fprintf( fp, "OSS: Process %d is writing to Page %d in Frame %d\n", 
 								message.pid, message.pageReferenced, i );
@@ -419,14 +419,14 @@ int main ( int argc, char *argv[] ) {
 				} 
 				// If not already-empty frame was found, set the flag to true. 
 				if ( i == ( MAX_MEMORY - 1 ) ) {
-					noEmptyFrames = true;
+					noEmptyFrame = true;
 				}
 			} // End of logic regarding having found an empty frame		
 			
 			// If there are no empty frames found during the above loop, then the second-chance algorithm
 			//	is used to clear one of the frames to make room for this new request. See README for 
 			//	more info on how the algorithm works in general. 
-			if ( noEmptyFrames == true ) {
+			if ( noEmptyFrame == true ) {
 				bool searching = true;	// Flag to control when the search is over.
 				int potentialFrame;	// Temp index of the frameTable to use while searching. 
 				int emptiedFrame;	// Index of the frameTable that will be removed to make room. 
@@ -491,24 +491,24 @@ int main ( int argc, char *argv[] ) {
 				if ( message.request_type == WRITE ) {
 					if ( keepLogging ) {
 						fprintf( fp, "OSS: Process %d is writing to Page %d in Frame %d at %d:%d\n", 
-							message.pid, message.pageReferenced, frameIndex, shmClock[0], shmClock[1]  );
+							message.pid, message.pageReferenced, emptiedFrame, shmClock[0], shmClock[1]  );
 						numberOfLines++;
 					}
-					frameTable[frameIndex].dirtyBit = 1; 
+					frameTable[emptiedFrame].dirtyBit = 1; 
 				}
 				
 				if ( message.request_type == READ ) {
-					if ( frameTable[frameIndex]dirtyBit == 1 ) {
+					if ( frameTable[emptiedFrame].dirtyBit == 1 ) {
 						if ( keepLogging ) {
 							fprintf( fp, "OSS: Process %d is reading from Page %d (dirty) in Frame %d at %d:%d.\n", 
-								message.pid, message.pageReferenced, frameIndex, shmClock[0], shmClock[1] );
+								message.pid, message.pageReferenced, emptiedFrame, shmClock[0], shmClock[1] );
 							numberOfLines++;
 						}
 						manageClock ( shmClock , 50 );
 					} else {
 						if ( keepLogging ) {
 							fprintf( fp, "OSS: Process %d is reading from Page %d in Frame %d at %d:%d.\n", 
-								message.pid, message.pageReferenced, frameIndex, shmClock[0], shmClock[1] );
+								message.pid, message.pageReferenced, emptiedFrame, shmClock[0], shmClock[1] );
 							numberOfLines++;
 						}
 					}
