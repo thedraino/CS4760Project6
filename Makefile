@@ -1,9 +1,5 @@
 
-// File name: Makefile
-// Created by: Andrew Audrain
-// Created on: 11/21/2018
-
-CC		= gcc
+CC	= gcc
 CFLAGS	= -g -lrt
 TARGET1	= oss
 TARGET2	= user
