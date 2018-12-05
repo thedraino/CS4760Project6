@@ -270,7 +270,7 @@ int main ( int argc, char *argv[] ) {
 		printf ("Waiting on message..\n" );
 		
 		/* 3. Wait for a message from a child with a memory request. */
-		msgrcv ( messageID, &message, sizeof ( message ), getpid(), 1 );
+		msgrcv ( messageID, &message, sizeof ( message ), getpid(), 0 );
 		totalMemoryRequests++;
 		printf ( "Message received.\n" );
 
