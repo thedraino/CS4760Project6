@@ -4,7 +4,7 @@
 // Created by: Andrew Audrain
 // Created on: 11/21/2018
 //
-// Purpose...
+// Program to simulate a USER process requesting memory access from the OSS
 
 #include "project6.h"
 
