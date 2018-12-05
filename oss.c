@@ -85,6 +85,8 @@ char logName[12] = "program.log";
 
 int main ( int argc, char *argv[] ) {
 	
+	printf ( "Entering main.\n" );
+	
 	/* General Use Variables */
 	int i, j;			// Control variables for loop logic. 
 	int maxCurrentProcesses;	// Controls the maximum number of processes that can be running at one time.
@@ -130,7 +132,7 @@ int main ( int argc, char *argv[] ) {
 		}
 	} // End of getopts
 	
-// 	printf ( "Max Processes: %d.\n", maxCurrentProcesses ); 
+	printf ( "Max Processes: %d.\n", maxCurrentProcesses ); 
 	
 	/* Signal Handling */
 	// Sets the timer alarm based on the value of KILL_TIME
@@ -145,6 +147,8 @@ int main ( int argc, char *argv[] ) {
 	if ( signal ( SIGALRM, sig_handle ) == SIG_ERR ) {
 		perror ( "OSS: alarm signal failed." );
 	}
+	
+	printf ( "Setup signal handling.\n" );
 	
 	/* Shared Memory */
 	// Create shared memory block for simulated system clock.
@@ -161,6 +165,8 @@ int main ( int argc, char *argv[] ) {
 	shmClock[0] = 0;	// Will hold the seconds value for the simulated clock.
 	shmClock[1] = 1;	// Will hold the nanoseconds value for the simulated clock. 
 	
+	printf ( "Setup shared memory.\n" );
+	
 	/* Message Queue */
 	// Create the message queue used for IPC.
 	if ( ( messageID = msgget ( messageKey, IPC_CREAT | 0666 ) ) == -1 ) {
@@ -168,6 +174,8 @@ int main ( int argc, char *argv[] ) {
 		
 		return 1;
 	}
+	
+	printf ( "Setup message queue.\n" );
 	
 	/* Setup for main loop */
 	// Create a queue large enough to hold all of the frames in the frame table at once. 
@@ -180,6 +188,8 @@ int main ( int argc, char *argv[] ) {
 		frameTable[i].occupiedBit = 0;
 	}
 	
+	printf ( "Setup frame table.\n" );
+	
 	// Process Control Block
 	// Declare the struct. Set the pid for each index to 0. Set each page's value to -1. 
 	int pcbIndex = 0; 
@@ -190,6 +200,8 @@ int main ( int argc, char *argv[] ) {
 			processControlBlock[i].pageTable[j] = -1;
 		}
 	}
+	
+	printf ( "Setup process control block.\n" );
 	
 	// Various variables used throughout main loop. 
 	pid_t childPid;
@@ -202,6 +214,8 @@ int main ( int argc, char *argv[] ) {
 	
 	/* Main Loop */
 	while ( totalProcessesCreated <= maxTotalProcesses ) {
+		printf ( "Entering main loop.\n" );
+		
 		/* 1. Check to make sure the log file has surpassed it maximum number of lines allowed. 
 		If it has, close the file and set the flag to false so no more writes will be done. */
 		if ( numberOfLines >= 10000 ) {
