@@ -85,7 +85,7 @@ int numberOfLines;
 /*************************************************************************************************************/
 
 int main ( int argc, char *argv[] ) {
-	
+	int maxCurrentProcesses; 
 	int opt = 0;	// Controls the getopt loop
 	
 	/* Loop to implement getopt to get any command-line options and/or arguments */
