@@ -241,6 +241,7 @@ int main ( int argc, char *argv[] ) {
 			
 			// If there is room...
 			if ( createProcess == true ) {
+				printf ( "Creating process.\n" );
 				// Error check...
 				if ( childPid == -1 ) {
 					perror ( "OSS: Failure to fork process correctly." );
