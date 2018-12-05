@@ -94,6 +94,7 @@ int main ( int argc, char *argv[] ) {
 		/* 5. Wait for message from OSS to know that memory request was granted. */
 		msgrcv ( messageID, &message, sizeof ( message ), myPid, 0 );
 		
+		numberOfReferences++;
 	} //  End of main loop
 	
 	return 0;
