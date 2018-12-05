@@ -22,7 +22,7 @@ typedef struct {
 // Structure to help define an the OSS's frame table. Each instance will represent a frame in the frame table. 
 //	OSS will create a an array of 256 Frames in main to represent the Frame Table. 
 typedef struct {
-	int occupiedBit;	// Bit to flag if the frame is currently occupied by a process.  
+	int occupiedBit;	// Bit to flag if the frame is currently occupied by a process. Default is 0.
 	int processID;		// Stores the pid of the process currently associated with this frame. 
 	int processPageFrame;	// Stores the frame of the associated process's page table that this reference is stored in. 
 	int referenceBit;	// Bit to flag if the frame has been referenced before (used with second-chance algorithm).
@@ -169,6 +169,47 @@ int main ( int argc, char *argv[] ) {
 		
 		return 1;
 	}
+	
+	/* Setup for main loop */
+	// Frame Table
+	// Declare the struct. Set the occupied bit for each index to 0. 
+	Frame frameTable[MAX_MEMORY];
+	for ( i = 0; i < MAX_MEMORY; ++i ) {
+		frameTable[i].occupiedBit = 0;
+	}
+	
+	// Process Control Block
+	// Declare the struct. Set the pid for each index to 0. Set each page's value to -1. 
+	Process processControlBlock[maxCurrentProcesses];
+	for ( i = 0; i < maxCurrentProcesses; ++i ) {
+		processControlBlock[i].pid = 0;
+		for ( j = 0; j < 32; ++j ) {
+			processControlBlock[i].pageTable[j] = -1;
+		}
+	}
+	
+	// Various boolean variables used throughout main loop. 
+	bool messageReceived;	// Flags if OSS has received a message.
+	bool pagePresent;	// Flags if the requested page is already stored in the frame table.
+	bool frameAvailable;	// Flags if there is an open frame in the frame table.
+	bool noEmptyFrame; 	// Flags if the frame table is full. 
+	
+	// Create a queue large enough to hold all of the frames in the frame table at once. 
+	Queue* queue = createQueue ( MAX_MEMORY );
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
