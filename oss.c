@@ -74,7 +74,7 @@ unsigned int totalSecondsProgramRan;
 
 // Logfile information
 FILE *fp;
-char logName[12] = "program.log";
+char logName[15] = "program.log";
 
 
 /*************************************************************************************************************/
