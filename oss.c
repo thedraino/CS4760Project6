@@ -89,7 +89,7 @@ int main ( int argc, char *argv[] ) {
 	
 	/* General Use Variables */
 	int i, j;			// Control variables for loop logic. 
-	int maxCurrentProcesses;	// Controls the maximum number of processes that can be running at one time.
+	int maxCurrentProcesses = MAX_PROCESSES;	// Controls the maximum number of processes that can be running at one time.
 	int maxTotalProcesses = 100;	// Controls the maximum number of processes that can be created throughout the program. 
 	srand ( time ( NULL ) );	// Seed for random number generation.
 	
@@ -126,9 +126,9 @@ int main ( int argc, char *argv[] ) {
 				}
 				break;
 
-			default:
-				maxCurrentProcesses = MAX_PROCESSES;
-				break;
+// 			default:
+// 				maxCurrentProcesses = MAX_PROCESSES;
+// 				break;
 		}
 	} // End of getopts
 	
