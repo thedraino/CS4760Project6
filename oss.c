@@ -281,6 +281,23 @@ int main ( int argc, char *argv[] ) {
 			}
 			kill ( message.pid, SIGTERM ); 
 			wait ( NULL );
+			
+			// Clear entry in process control block.
+			processControlBlock[currentIndex].pid = 0;
+			for ( i = 0; i < 32; ++i ) {
+				processControlBlock[currentIndex].pageTable[i] = -1;
+			}
+			
+			// Mark any associated frame in frame table as unoccupied. 
+			for ( i = 0; i < MAX_MEMORY; ++i ){
+				if ( frameTable[i].processID == message.pid ) {
+					frameTable[i].occupiedBit = 0; 
+					frameTable[i].processID = 0;
+					frameTable[i].processPageFrame = -1;
+					frameTable[i].referenceBit = 0;
+					frameTable[i].dirtyBit = 0;
+				}
+			}
 			continue; 
 		} else {
 			if ( keepLogging ) {
@@ -510,6 +527,7 @@ int main ( int argc, char *argv[] ) {
 	} // End of main loop
 	
 	wait ( NULL ); 
+	
 	cleanUpResources();
 	
 	return 0;
@@ -522,11 +540,6 @@ int main ( int argc, char *argv[] ) {
 /*************************************************************************************************************/
 
 
-// if ( keepLogging ) {
-// 	fprintf( fp, "\n", );
-// 	numberOfLines++;
-// }
-
 // Function that increments the clock by some amount of time at different points to simulate processing time or 
 // overhead time. Also makes sure that nanoseconds are converted to seconds if/when necessary.
 void manageClock ( unsigned int clock[], int timeElapsed ) {
@@ -536,9 +549,24 @@ void manageClock ( unsigned int clock[], int timeElapsed ) {
 	clock[1] = clock[1] % 1000000000;
 }
 
+// int totalProcessesCreated = 0;
+// int totalMemoryRequests = 0;
+// int totalPageFaults = 0;
+// double numberOfMemoryAccessesPerSecond;
+// double numberOfPageFaultsPerMemoryAccess;
+// unsigned int totalSecondsProgramRan;
+
 // Function to print the after-run report showing any relevant statistics. 
 void printReport() {
-
+	totalSecondsProgramRan = shmClock[0]; 
+	numberOfMemoryAccessesPerSecond = totalMemoryRequests / totalSecondsProgramRan;
+	numberOfPageFaultsPerMemoryAccess = totalPageFaults / totalMemoryRequests;
+	
+	printf ( "Total processes created: %d.\n", totalProcessesCreated );
+	printf ( "Total memory requests processed: %d.\n", totalMemoryRequests );
+	printf ( "Total page faults: %d.\n", totalPageFaults );
+	printf ( "Number of memory accesses per second: %f.\n", numberOfMemoryAccessesPerSecond );
+	printf ( "Number of page faults per second: %f.\n", numberOfPageFaultsPerMemoryAccess );
 }
 
 // Function to terminate all shared memory and message queue upon completion or to be used with signal handling.
