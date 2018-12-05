@@ -58,9 +58,9 @@ int rear ( Queue* queue );
 
 /***** Global Variables *****/
 // Constants
-const int MAX_PROCESSES 18;	// Default guard for maxCurrentProcesses value defined below.
-const int MAX_MEMORY 256; 	// 
-const int KILL_TIME 2;		// Constant time for alarm signal handling.
+const int MAX_PROCESSES = 18;	// Default guard for maxCurrentProcesses value defined below.
+const int MAX_MEMORY = 256; 	// 
+const int KILL_TIME = 2;	// Constant time for alarm signal handling.
 const int READ = 0;		// Constant to compare the request_type value to when a message is sent by USER. If
 const int WRITE = 1;		//	request_type == 0, it is a read. If request_type == 1, it is a write. 
 	
