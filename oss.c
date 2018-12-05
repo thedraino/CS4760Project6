@@ -267,10 +267,12 @@ int main ( int argc, char *argv[] ) {
 			}
 		} // End of creating new process
 		
+		printf ("Waiting on message..\n" );
+		
 		/* 3. Wait for a message from a child with a memory request. */
 		msgrcv ( messageID, &message, sizeof ( message ), getpid(), 1 );
 		totalMemoryRequests++;
-// 		printf ( "Message received.\n" );
+		printf ( "Message received.\n" );
 
 		
 		// Set the following flags to false each run through the loop...
