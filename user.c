@@ -11,7 +11,6 @@
 int main ( int argc, char *argv[] ) {
 	
 	/* General Use Variables */
-	int i;				// Control variable for loop logic. 
 	long myPid = getpid();		// Store personal ID.
 	long ossPid = getppid();	// Store OSS pid for messaging. 
 	int numberOfReferences = 0; 	// Counter for the number of memory requests sent to OSS.
@@ -22,7 +21,6 @@ int main ( int argc, char *argv[] ) {
 	int memoryRequestType; 
 	int memoryRequestRNG; 
 	int terminationRNG; 
-	int memoryAddress; 
 	int pageNeeded; 
 	
 	/* Signal Handling */
@@ -80,7 +78,7 @@ int main ( int argc, char *argv[] ) {
 		message.pageReferenced =  pageNeeded;
 		
 		/* 3. Determine if memory request will be read or write. 50/50 chance. */
-		if ( memoryRequestRNG > 50 {
+		if ( memoryRequestRNG > 50 ) {
 			memoryRequestType = 0;		//  0 maps to a READ in OSS.
 		} else {
 			memoryRequestType = 1; 		// 1 maps to o WRITE in OSS.
@@ -101,9 +99,9 @@ int main ( int argc, char *argv[] ) {
 	return 0;
 }
 
-int sig_handle ( int sig_num ) {
+void sig_handle ( int sig_num ) {
 	if ( sig_num == SIGINT ) {
-		printf ( "Process %d was received signal to terminate.\n", myPid );
+		printf ( "Process %d was received signal to terminate.\n", getpid() );
 		exit ( 0 );
 	}
 }
