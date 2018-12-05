@@ -586,6 +586,7 @@ void cleanUpResources() {
 void sig_handle ( int sig_num ) {
 	if ( sig_num == SIGINT || sig_num == SIGALRM ) {
 		printf ( "Signal to terminate was received.\n" );
+		printf ( "Total processes created: %d\n", totalProcessesCreated ); 
 		cleanUpResources();
 		kill ( 0, SIGKILL );
 		wait ( NULL );
