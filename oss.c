@@ -89,7 +89,6 @@ int main ( int argc, char *argv[] ) {
 	int i, j;			// Control variables for loop logic. 
 	int maxCurrentProcesses;	// Controls the maximum number of processes that can be running at one time.
 	int maxTotalProcesses = 100;	// Controls the maximum number of processes that can be created throughout the program. 
-	long ossID = getpid();		// Store the pid for OSS.
 	srand ( time ( NULL ) );	// Seed for random number generation.
 	
 	fp = fopen ( logName, "w+" );	// Open up the log file for writing to. 
@@ -196,9 +195,7 @@ int main ( int argc, char *argv[] ) {
 	pid_t childPid;
 	int currentIndex;
 	int frameIndex;
-	bool messageReceived;	// Flags if OSS has received a message.
 	bool pagePresent;	// Flags if the requested page is already stored in the frame table.
-	bool frameAvailable;	// Flags if there is an open frame in the frame table.
 	bool noEmptyFrame; 	// Flags if the frame table is full. 
 	bool createProcess;	// Flags if it is okay to create a new process.
 	unsigned int newProcessTime[2] = { 0, 0 };	// Time value at which a new process should be be created.
