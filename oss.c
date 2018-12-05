@@ -213,7 +213,7 @@ int main ( int argc, char *argv[] ) {
 	unsigned int newProcessTime[2] = { 0, 0 };	// Time value at which a new process should be be created.
 	
 	/* Main Loop */
-	while ( totalProcessesCreated <= maxTotalProcesses ) {
+	while ( 1 ) {
 		printf ( "Entering main loop.\n" );
 		
 		/* 1. Check to make sure the log file has surpassed it maximum number of lines allowed. 
