@@ -231,6 +231,7 @@ void sig_handle ( int sig_num ) {
 		kill ( 0, SIGKILL );
 		wait ( NULL );
 		exit ( 0 );
+	}
 }
 
 // Function to create a queue of given capacity.
