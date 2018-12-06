@@ -13,10 +13,8 @@
 // Structure to represent the process control block. New processes can be created as long as the block is not full at the 
 //	time. Each instance of a Process will be stored in an array the size of MAX_PROCESSES.
 typedef struct {
-	int pid;		// Store the process ID of the process currently occupying this index of the block. 
 	int pageTable[32];	// Store the process's page table to keep track of what frames the process's pages
 				//	are stored in currently. 
-	unsigned int processCreationTime[2];	//  Capture the time at which the process is added to the control block. 
 } Process;
 
 // Structure to help define an the OSS's frame table. Each instance will represent a frame in the frame table. 
