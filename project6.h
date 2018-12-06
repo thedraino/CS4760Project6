@@ -32,6 +32,7 @@
 // Structure used in the message queue 
 typedef struct {
 	long msg_type;			// Control what process can receive the message.
+	int blockIndex;			// Store the process's index in OSS's process control block.
 	int pid;			// Store the sending process's pid.
 	int pageReferenced;		// Store the page of the sending process that was requested. 
 	int request_type;		// Flag to show the type of memory request that the process is making: 
