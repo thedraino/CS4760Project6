@@ -15,6 +15,8 @@ commented the code really well to show that I understand the logic of the paging
 second change algorithm, but I cannot figure out the issue. 
 
 Things it does: 
+- Uses a makefile
+- make and make clean commands work as instructed
 - Sets up shared memory for system clock
 - Uses message queues
 - Uses getotps
