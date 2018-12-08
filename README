@@ -1,6 +1,31 @@
 CS4760Project6
 Operating System Simulator - Memory Management
 
+To run program: 
+1. make
+2. 
+- ./oss		Run with default arguments. 
+- ./oss -h	Display help message for usage. 
+- ./oss -s x	Run while specificying a max number of x current processes. 
+
+Known issues: 
+- Code straight up does not run like I want it to. I've rewritten it like three times. 
+Something is messing it up right when it runs into the main loop portion. I 
+commented the code really well to show that I understand the logic of the paging and 
+second change algorithm, but I cannot figure out the issue. 
+
+Things it does: 
+- Sets up shared memory for system clock
+- Uses message queues
+- Uses getotps
+- Destroys shared memory and message queue upon termination (early or normal)
+- Used signal handling 
+- Sets up a process control block and frame table
+
+Please see comments throughout code to see the logic of it all. 
+
+I can't figure out what is blocking it frrom working correctly. 
+
 Sanjiv's Notes...
 – Second-Chance Algorithm
 	∗ Basically a FIFO replacement algorithm
